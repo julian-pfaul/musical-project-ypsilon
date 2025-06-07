@@ -25,5 +25,6 @@
     "device": "cuda",
     "batch_size": 32,
     "maximum_epoch": 2147483647,
-    "maximum_displayed_average_losses": 200
+    "maximum_displayed_average_losses": 200,
+    "checkpoint_interval": 120
 }

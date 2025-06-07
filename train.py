@@ -337,9 +337,9 @@ def main():
 
         save_model(model_directory, model)
 
-        checkpoint_directory = os.path.join(checkpoints_directory, f"epoch-{epoch}")
-
-        save_checkpoint(checkpoint_directory, epoch+1, model, optimizer, average_loss)
+        if epoch % run_data["checkpoint_interval"] == 0:
+            checkpoint_directory = os.path.join(checkpoints_directory, f"epoch-{epoch}")
+            save_checkpoint(checkpoint_directory, epoch+1, model, optimizer, average_loss)
 
         checkpoint_directory = os.path.join(checkpoints_directory, "main")
         save_checkpoint(checkpoint_directory, epoch+1, model, optimizer, average_loss)
