@@ -30,7 +30,7 @@ class Encoder(nn.Module):
         # ipt : (B, L, C)
 
         x = ipt.unsqueeze(dim=-1).expand(-1, -1, -1, self.d_model // 2)
-        x = x * self.mul_term.cuda().requires_grad_(False)
+        x = x * self.mul_term.to(ipt.device).requires_grad_(False)
         x = x.permute((0, 1, 3, 2))
 
         proj_x = torch.zeros(ipt.size(0), ipt.size(1), self.d_model, self.num_features).to(ipt.device)
