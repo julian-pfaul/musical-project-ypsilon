@@ -14,10 +14,6 @@ print = lambda x: tqdm.write(f"{x}")
 
 
 def plot(x, y, rows=None, columns=None):
-    """
-    x, y list of values on x- and y-axis
-    plot those values within canvas size (rows and columns)
-    """
     def_row, def_col = get_terminal_size()
     rows = rows if rows else def_row
     columns = columns if columns else def_col
@@ -26,7 +22,6 @@ def plot(x, y, rows=None, columns=None):
     # offset for caption
     rows -= 4
 
-    # Scale points such that they fit on canvas
     x_scaled = scale(x, columns)
     y_scaled = scale(y, rows)
 
@@ -44,7 +39,10 @@ def plot(x, y, rows=None, columns=None):
         delta_x = p2x - p1x
         delta_y = p2y - p1y
 
-        y_step = delta_y / delta_x
+        if delta_x == 0:
+            y_step = 1
+        else:
+            y_step = delta_y / delta_x
 
         for step in range(delta_x):
             x_pos = p1x + step
@@ -53,17 +51,13 @@ def plot(x, y, rows=None, columns=None):
             x_positions.append(int(x_pos))
             y_positions.append(int(y_pos))
 
-
-    # Create empty canvas
     canvas = [[" " for _ in range(columns)] for _ in range(rows)]
 
-    # Add scaled points to canvas
     for ix, iy in zip(x_positions, y_positions):
         canvas[rows - iy - 1][ix] = "*"
 
     canvas = "\n".join(["".join(row) for row in canvas])
 
-    # Print scale
     print(
         "".join(
             [
@@ -83,11 +77,6 @@ def plot(x, y, rows=None, columns=None):
 
 
 def scale(x, length):
-    """
-    Scale points in 'x', such that distance between
-    max(x) and min(x) equals to 'length'. min(x)
-    will be moved to 0.
-    """
     s = (
         float(length - 1) / (max(x) - min(x))
         if x and max(x) - min(x) != 0
@@ -332,8 +321,11 @@ def main():
         num_average_losses = len(average_losses)
         maximum_displayed_average_losses = run_data["maximum_displayed_average_losses"]
 
-        print("\033[H\033[J")
-        plot(range(epoch-min(num_average_losses - 1, maximum_displayed_average_losses - 1), epoch+1), average_losses[-maximum_displayed_average_losses:])
+        try:
+            print("\033[H\033[J")
+            plot(range(epoch-min(num_average_losses - 1, maximum_displayed_average_losses - 1), epoch+1), average_losses[-maximum_displayed_average_losses:])
+        except Exception as e:
+            print(e)
 
         save_model(model_directory, model)
 
